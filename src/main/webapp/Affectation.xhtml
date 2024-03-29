@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Associate Employee with Project</title>
+</h:head>
+<h:body>
+    <h2>Associate Employee with Project</h2>
+    <h:form id="affectionForm">
+        <h:selectOneMenu id="employeeMenu" value="#{AffectionBean.selectedEmployeeId}">
+            <f:selectItem itemLabel="Employee Name " itemValue="" />
+            <f:selectItems value="#{AffectionBean.availableEmployees}" var="employee"
+                           itemValue="#{employee.id}" itemLabel="#{employee.name}" />
+        </h:selectOneMenu>
+        <h:selectOneMenu id="projectMenu" value="#{AffectionBean.selectedProjectId}">
+            <f:selectItem itemLabel="Project Name" itemValue="" />
+            <f:selectItems value="#{AffectionBean.availableProjects}" var="project"
+                           itemValue="#{project.id}" itemLabel="#{project.name}" />
+        </h:selectOneMenu>
+        <h:commandButton value="Affecter Projet" action="#{AffectionBean.associateEmployeeWithProject}" />
+    </h:form>
+</h:body>
+</html>
