@@ -1,28 +1,31 @@
 package com.example.employe.Bean;
 
-
 import com.example.employe.Model.EmployeEntityManager;
+import com.example.employe.Service.EmployeService;
+
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
 import java.util.List;
-import com.example.employe.Service.EmployeService;
 
 @Named
 @RequestScoped
 public class EmployeBean {
-    private int Id;
+    private int id; // Changed from Id to id to follow Java naming conventions
     private String name;
     private String email;
     private String skills;
-    private EmployeEntityManager employeEntityManager;
+
+    // Getters and setters
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -48,16 +51,26 @@ public class EmployeBean {
     public void setSkills(String skills) {
         this.skills = skills;
     }
-    public List EmployeListFromDb() {
+
+    // Methods for interacting with EmployeService
+
+    public List<EmployeEntityManager> getEmployeListFromDb() {
         return EmployeService.getEmployesListService();
     }
 
-    public String addNewEmploye() {
-        return EmployeService.addEmployeService(employeEntityManager);
+    public void addNewEmploye() {
+        if (name != null && !name.isEmpty() && email != null && !email.isEmpty() && skills != null && !skills.isEmpty()) {
+            EmployeEntityManager employeEntityManager = new EmployeEntityManager();
+            employeEntityManager.setName(name);
+            employeEntityManager.setEmail(email);
+            employeEntityManager.setSkills(skills);
+            EmployeService.addEmployeService(employeEntityManager);
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please provide valid name, email, and skills."));
+        }
     }
 
-    public String deleteEmploye(int EmployeId) {
-        return EmployeService.deleteEmployeService(EmployeId);
+    public void deleteEmploye(int employeId) {
+        EmployeService.deleteEmployeService(employeId);
     }
-
 }

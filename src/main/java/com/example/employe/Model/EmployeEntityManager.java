@@ -4,40 +4,34 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="employe")
+@Table(name = "employe")
 public class EmployeEntityManager {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="skills")
+    @Column(name = "skills", nullable = true)
     private String skills;
 
     @ManyToMany
     @JoinTable(
             name = "employe_project",
             joinColumns = @JoinColumn(name = "employe_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
+            inverseJoinColumns =
+                    @JoinColumn(name = "project_id")
     )
     private List<ProjectEntity> projects;
 
     public EmployeEntityManager() {
     }
-
-    public EmployeEntityManager(String name, String email, String skills) {
-        this.name = name;
-        this.email = email;
-        this.skills = skills;
-    }
-
 
     public int getId() {
         return id;

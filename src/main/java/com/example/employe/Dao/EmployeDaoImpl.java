@@ -5,70 +5,68 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-public class EmployeDaoImpl{
+public class EmployeDaoImpl {
 
     private static final String PERSISTENCE_UNIT_NAME = "employe_persist";
-    private static EntityManager entityMgrObj = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME).createEntityManager();
-    private static EntityTransaction transactionObj = entityMgrObj.getTransaction();
+    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 
-    @SuppressWarnings("unchecked")
-    public static List getAllEmployeDetails() {
-        Query queryObj = entityMgrObj.createQuery("SELECT s FROM EmployeEntityManager s");
-        List employeList = queryObj.getResultList();
-        if (employeList != null && employeList.size() > 0) {
-            return employeList;
-        } else {
-            return null;
+    public static List<EmployeEntityManager> getAllEmployeDetails() {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            TypedQuery<EmployeEntityManager> query = entityManager.createQuery("SELECT s FROM EmployeEntityManager s", EmployeEntityManager.class);
+            return query.getResultList();
+        } finally {
+            entityManager.close();
         }
     }
 
     public static void createNewEmploye(String name, String email, String skills) {
-        if(!transactionObj.isActive()) {
-            transactionObj.begin();
-        }
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
 
-        EmployeEntityManager newEmployeObj = new EmployeEntityManager();
-        newEmployeObj.setId(getMaxEmployeId());
-        newEmployeObj.setName(name);
-        newEmployeObj.setEmail(email);
-        newEmployeObj.setName(skills);
-        entityMgrObj.persist(newEmployeObj);
-        transactionObj.commit();
+            EmployeEntityManager newEmployeObj = new EmployeEntityManager();
+            newEmployeObj.setId(getMaxEmployeId(entityManager));
+            newEmployeObj.setName(name);
+            newEmployeObj.setEmail(email);
+            newEmployeObj.setSkills(skills);
+            entityManager.persist(newEmployeObj);
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace(); // Handle or log the exception appropriately
+        } finally {
+            entityManager.close();
+        }
     }
 
-    public static String deleteEmployeDetails(int EmployeId) {
-        if (!transactionObj.isActive()) {
-            transactionObj.begin();
+    public static String deleteEmployeDetails(int employeId) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            EmployeEntityManager deleteEmployeObj = entityManager.find(EmployeEntityManager.class, employeId);
+            if (deleteEmployeObj != null) {
+                entityManager.remove(deleteEmployeObj);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace(); // Handle or log the exception appropriately
+        } finally {
+            entityManager.close();
         }
-
-        EmployeEntityManager deleteEmployeObj = new EmployeEntityManager();
-        if(isEmployeIdPresent(EmployeId)) {
-            deleteEmployeObj.setId(EmployeId);
-            entityMgrObj.remove(entityMgrObj.merge(deleteEmployeObj));
-        }
-        transactionObj.commit();
         return "EmployesList.xhtml?faces-redirect=true";
     }
 
-
-    private static int getMaxEmployeId() {
-        int maxEmployeId = 1;
-        Query queryObj = entityMgrObj.createQuery("SELECT MAX(s.id)+1 FROM EmployeEntityManager s");
-        if(queryObj.getSingleResult() != null) {
-            maxEmployeId = (Integer) queryObj.getSingleResult();
-        }
-        return maxEmployeId;
-    }
-
-    private static boolean isEmployeIdPresent(int EmployeId) {
-        boolean idResult = false;
-        Query queryObj = entityMgrObj.createQuery("SELECT s FROM EmployeEntityManager s WHERE s.id = :id");
-        queryObj.setParameter("id", EmployeId);
-        EmployeEntityManager selectedEmployeId = (EmployeEntityManager) queryObj.getSingleResult();
-        if(selectedEmployeId != null) {
-            idResult = true;
-        }
-        return idResult;
+    private static int getMaxEmployeId(EntityManager entityManager) {
+        Integer maxEmployeId = entityManager.createQuery("SELECT MAX(s.id) FROM EmployeEntityManager s", Integer.class).getSingleResult();
+        return maxEmployeId != null ? maxEmployeId + 1 : 1;
     }
 }
-

@@ -6,6 +6,7 @@ import com.example.employe.Model.ProjectEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.model.SelectItem;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.persistence.*;
@@ -21,6 +22,22 @@ public class AffectionBean implements Serializable {
     private int selectedProjectId;
     private List<EmployeEntityManager> availableEmployees;
     private List<ProjectEntity> availableProjects;
+    private int contributionPercentage;
+
+    public int getContributionPercentage() {
+        return contributionPercentage;
+    }
+
+    public void setContributionPercentage(int contributionPercentage) {
+        this.contributionPercentage = contributionPercentage;
+    }
+    public List<SelectItem> getContributionOptions() {
+        List<SelectItem> options = new ArrayList<>();
+        for (int i = 10; i <= 100; i += 10) {
+            options.add(new SelectItem(i, i + "%"));
+        }
+        return options;
+    }
 
     @PostConstruct
     public void init() {
@@ -33,7 +50,7 @@ public class AffectionBean implements Serializable {
     }
 
     public void associateEmployeeWithProject() {
-        EntityManager entityManager = Persistence.createEntityManagerFactory("persistence").createEntityManager();
+        EntityManager entityManager = Persistence.createEntityManagerFactory("employe_persist").createEntityManager();
         try {
             EmployeEntityManager employee = entityManager.find(EmployeEntityManager.class, selectedEmployeeId);
             ProjectEntity project = entityManager.find(ProjectEntity.class, selectedProjectId);

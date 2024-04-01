@@ -5,16 +5,21 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="project")
+@Table(name = "project")
 public class ProjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
-    @Column(name="name")
+
+    @Column(name = "name")
     private String name;
-    @Column(name="budget")
+
+    @Column(name = "budget")
     private double budget;
+
+    @ManyToMany(mappedBy = "projects")
+    private List<EmployeEntityManager> employees;
 
     public ProjectEntity() {
     }
@@ -42,6 +47,5 @@ public class ProjectEntity {
     public void setBudget(double budget) {
         this.budget = budget;
     }
-    @ManyToMany(mappedBy = "projects")
-    private List<EmployeEntityManager> employees;
+
 }
