@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Create Employee Record</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { margin-top: 50px; }
+        .bg-green { background-color: #28a745 !important; color: #fff; }
+        .bg-green-light { background-color: #82e0aa !important; color: #000; }
+        .bg-green-dark { background-color: #1e8449 !important; color: #fff; }
+    </style>
+</h:head>
+<h:body>
+    <div class="container-md" >
+
+        <div class="card" style="width: 500px;">
+            <div class="card-body">
+                <h2 class="card-title text-center" >Create Employee Record</h2>
+    <h:form id="EmployeBeanForm">
+
+        <div class="form-group">
+        <h:outputLabel for="name" >Name:</h:outputLabel>
+        <h:inputText id="name" class="form-control" value="#{employeBean.name}"  required="true" requiredMessage="Employe Name Cannot Be Blank" />
+        <h:message for="name"  />
+        </div>
+        <div class="form-group">
+        <h:outputLabel for="email" >Email:</h:outputLabel>
+        <h:inputText id="email" class="form-control" value="#{employeBean.email}"  required="true" requiredMessage="Employe email Cannot Be Blank" />
+        <h:message for="email"  />
+        </div>
+        <div class="form-group">
+        <h:outputLabel for="Skills" >Skills:</h:outputLabel>
+        <h:inputText id="Skills" class="form-control" value="#{employeBean.skills}"  required="true" requiredMessage="Employe Skills Cannot Be Blank" />
+        <h:message for="Skills"  />
+        </div>
+
+
+        <div class="form-group text-center">
+        <h:commandButton value="Save" styleClass="btn btn-outline-success" action="#{employeBean.addNewEmploye()}"  />
+        </div>
+        <div class="form-group text-center">
+        <h:outputLink value="EmployesList.xhtml">View Employe Record List</h:outputLink>
+        </div>
+    </h:form>
+    </div>
+    </div>
+    </div>
+</h:body>
+</html>
